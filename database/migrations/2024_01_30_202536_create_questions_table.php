@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->nullable();
             $table->foreign('user_id')->on('users')->references('id')->cascadeOnDelete();
             $table->string('question', 191)->unique();
             $table->string('answer', 255);
