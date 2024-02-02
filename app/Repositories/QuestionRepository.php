@@ -11,7 +11,6 @@ class QuestionRepository extends BaseRepository
     public function create($attributes)
     {
         return DB::transaction(function() use($attributes) {
-            dump('from Repository:' . data_get($attributes, 'user_id'));
             $created = Question::query()->create([
                 "question" => data_get($attributes, 'question'),
                 "answer" => data_get($attributes, 'answer'),

@@ -17,18 +17,9 @@ class QuestionController extends Controller
      */
     public function index()
     {
-
         $questions = Question::query()->paginate(20);
 
         return QuestionResource::collection($questions);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -39,44 +30,29 @@ class QuestionController extends Controller
     public function store(StoreQuestionRequest $request, QuestionRepository $repository)
 {
     $validatedData = $request->validated();
-    $created = $repository->create([
-        "question" => $validatedData['question'],
-        "answer" => $validatedData['answer'],
-        "opt_1" => $validatedData['opt_1'],
-        "opt_2" => $validatedData['opt_2'],
-        "opt_3" => $validatedData['opt_3'],
-        "user_id" => $validatedData['user_id']
-    ]);
+    $created = $repository->create($validatedData);
 
     return new QuestionResource($created);
 }
 
     /**
      * Display the specified resource.
+     * @param \App\Models\Question $question
+     * @return QuestionResource
      */
-    public function show(Question $question): JsonResponse
+    public function show(Question $question)
     {
-        return new JsonResponse([
-            'data' => Question::find($question)
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Question $question)
-    {
-        //
+        return new QuestionResource($question);
     }
 
     /**
      * Update the specified resource in storage.
+     * @param \App\Model\Question $question
+     * @param \App\Http\Requests\UpdateQuestionRequest $request
+     * @return QuestionResource
      */
     public function update(UpdateQuestionRequest $request, Question $question, QuestionRepository $repository)
     {
-        // $validatedData = $request->validate();
-        // dump($validatedData);
-
         $question = $repository->update($question, $request->only([
             "question",
             "answer",
@@ -90,6 +66,8 @@ class QuestionController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @param \App\Models\Question $question
+     * @return JsonResponse
      */
     public function destroy(Question $question, QuestionRepository $repository)
     {
