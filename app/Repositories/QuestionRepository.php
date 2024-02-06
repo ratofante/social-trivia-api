@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\GeneralJsonException;
 use App\Models\Question;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,8 @@ class QuestionRepository extends BaseRepository
                 "opt_3" => data_get($attributes, 'opt_3'),
                 "user_id" => data_get($attributes, 'user_id')
             ]);
+
+            throw_if(!$created, GeneralJsonException::class, 'Failed to create question');
     
             return $created;
         });        
@@ -40,9 +43,7 @@ class QuestionRepository extends BaseRepository
                 "user_id" => $question->user_id
             ]);
 
-            if(!$update) {
-                throw new Exception('Failed to update post');
-            }
+            throw_if(!$update, GeneralJsonException::class, 'Failed to update question');
 
             return $question;
         });
@@ -56,9 +57,7 @@ class QuestionRepository extends BaseRepository
         DB::transaction(function() use($question) {
             $deleted = $question->forceDelete();
 
-            if(!$deleted) {
-                throw new Exception('Failed to delete post');
-            }
+            throw_if(!$deleted, GeneralJsonException::class, 'Failed to delete question');
 
             return $deleted;
         });

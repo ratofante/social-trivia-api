@@ -22,12 +22,28 @@ class StoreQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'question' => 'string',
-            'answer' => 'string',
-            'opt_1' => 'nullable|string',
-            'opt_2' => 'nullable|string',
-            'opt_3' => 'nullable|string',
+            'question' => 'string|unique:questions|max:191',
+            'answer' => 'string|max:255',
+            'opt_1' => 'string|max:255',
+            'opt_2' => 'string|max:255',
+            'opt_3' => 'string|max:255',
             'user_id' => 'nullable|exists:users,id'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'question.unique' => 'There is an identical question on the game already',
+            'question.required' => 'A title is required',
+            'question.max' => 'the question is too long', 
+            'answer.string' => 'The answer should be a string.',
+            'user_id.exists' => 'There is no current user with that id'
         ];
     }
 }
