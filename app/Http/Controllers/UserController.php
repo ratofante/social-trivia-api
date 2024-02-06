@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Models\User\UserCreated;
+use App\Events\Models\User\UserDeleted;
+use App\Events\Models\User\UserUpdated;
 use App\Models\User;
 use Illumniate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +22,6 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()->paginate(20);
-
         return UserResource::collection($users);
     }
 
@@ -32,6 +34,8 @@ class UserController extends Controller
     {
         $validated = $request->validated();
         $created = $repository->create($validated);
+
+        event(new UserCreated($created));
 
         return new UserResource($created);
     }
@@ -59,6 +63,7 @@ class UserController extends Controller
             'email',
             'password' 
         ]));
+        event(new UserUpdated($user));
 
         return new UserResource($user);
     }
@@ -71,6 +76,7 @@ class UserController extends Controller
     public function destroy(User $user, UserRepository $repository)
     {
         $repository->forceDelete($user);
+        event(new UserDeleted($user));
 
         return new JsonResponse([
             'message' => 'success'

@@ -22,7 +22,26 @@ class UpdateQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'question' => 'string|unique:questions|max:191',
+            'answer' => 'string|max:255',
+            'opt_1' => 'string|max:255',
+            'opt_2' => 'string|max:255',
+            'opt_3' => 'string|max:255'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'question.unique' => 'There is an identical question on the game already',
+            'question.required' => 'A title is required',
+            'question.max' => 'the question is too long', 
+            'answer.string' => 'The answer should be a string.',
         ];
     }
 }
